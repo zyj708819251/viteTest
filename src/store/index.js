@@ -67,9 +67,7 @@ export const useInfo = defineStore('test', {
             });
         },
         loginOut(){
-            this.asyncRoute=[];
-            this.leftMenu=[];
-            this.userName=[];
+            this.$reset();
         }
     },
 });
