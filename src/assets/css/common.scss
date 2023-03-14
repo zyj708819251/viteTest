@@ -1,0 +1,30 @@
+
+// @include s-overflow;
+@mixin s-overflow() {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+}
+// @include m-overflow(2);
+@mixin m-overflow($line) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: $line;
+    -webkit-box-orient: vertical;
+}
+// @include flex;   @include flex(column);
+@mixin flex($direction: row) {
+    display: flex;
+    display: -webkit-flex;
+    flex-direction: $direction;
+}
+// @include height(100%,10px);
+@mixin height($ratio, $px) {
+    height: calc(#{$ratio} - #{$px});
+}
+// @include width(100%,10px);
+@mixin width($ratio, $px) {
+    width: calc(#{$ratio} - #{$px});
+}
