@@ -6,7 +6,6 @@ export const useInfo = defineStore('test', {
     state: () => {
         return {
             asyncRoute: [],
-            routes: [],
             leftMenu: [],
             isCollapse: true,
             userName: 'XXX',
@@ -67,6 +66,11 @@ export const useInfo = defineStore('test', {
                 }
             });
         },
+        loginOut(){
+            this.asyncRoute=[];
+            this.leftMenu=[];
+            this.userName=[];
+        }
     },
 });
 // 遍历后台传来的路由字符串，转换为组件对象

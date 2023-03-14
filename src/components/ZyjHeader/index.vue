@@ -35,6 +35,7 @@ let isOpened = () => {
 let exitSys = () => {
     removeToken();
     sessionStorage.clear();
+    store.loginOut();
     router.push('/login')
 };
 </script>
