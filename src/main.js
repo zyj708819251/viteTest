@@ -1,11 +1,13 @@
 import { createApp } from 'vue'
 import App from '@/App.vue'
-import '@assets/css/index.scss'
+
 
 const app = createApp(App);
 //全局变量定义
 app.config.globalProperties.abc=123
 console.log(app.config.globalProperties);
+console.log(import.meta.env);
+
 //动态路由
 import '@/permission.js'
 
@@ -44,4 +46,8 @@ import {myMixin} from '@/mixins/index.js'
 app.mixin(myMixin)
 
 
+
+
+
+import '@assets/css/index.scss'
 app.mount('#app')

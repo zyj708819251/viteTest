@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-defineProps(["list"]);
+    defineProps(['list']);
 </script>
 
 <style></style>

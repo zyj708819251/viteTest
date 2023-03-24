@@ -24,19 +24,14 @@
 <script setup>
 import { useInfo } from "@store/index.js";
 import ZyjBread from "@com/ZyjBread/index.vue";
-import { useRouter} from "vue-router";
-import { removeToken } from "@utils/auth";
-const router = useRouter();
+
 let store = useInfo();
 
 let isOpened = () => {
     store.setIsCollapse();
 };
 let exitSys = () => {
-    removeToken();
-    sessionStorage.clear();
     store.loginOut();
-    router.push('/login')
 };
 </script>
 
@@ -44,12 +39,14 @@ let exitSys = () => {
     .headerLeft{
         display: flex;
         align-items: center;
-        .sz {
+        .sz,.goHome {
             display: flex;
             align-items: center;
-            font-size: 22px;
             cursor: pointer;
             margin-right: 15px;
+        }
+        .sz{
+             font-size: 22px;
         }
     }
 

@@ -2,6 +2,11 @@ import { defineStore } from 'pinia'; //引入pinia
 import { getRouters, getInfo } from '@api/login';
 import Layout from '@com/Layout/index.vue';
 import ParentView from '@com/ParentView/index.vue';
+
+import { removeToken,removeExpiresIn } from "@utils/auth";
+
+import router from "@/router";
+
 export const useInfo = defineStore('test', {
     state: () => {
         return {
@@ -23,7 +28,7 @@ export const useInfo = defineStore('test', {
         // 获取用户信息
         getInfo() {
             return new Promise((resolve, reject) => {
-                let local = JSON.parse(sessionStorage.getItem('user'));
+                let local = sessionStorage.getItem('user')&&JSON.parse(sessionStorage.getItem('user'));
                 if (local) {
                     resolve(local);
                 } else {
@@ -43,11 +48,11 @@ export const useInfo = defineStore('test', {
         getRouters() {
             //异步函数
             return new Promise((resolve, reject) => {
-                let leftMenu = JSON.parse(sessionStorage.getItem('leftMenu'));
+                let leftMenu = sessionStorage.getItem('leftMenu')&&JSON.parse(sessionStorage.getItem('leftMenu'));
                 if (leftMenu) {
                     this.leftMenu = leftMenu;
                 }
-                let local = JSON.parse(sessionStorage.getItem('menu'));
+                let local = sessionStorage.getItem('menu')&&JSON.parse(sessionStorage.getItem('menu'));
                 if (local) {
                     this.asyncRoute = local[0].children;
                     var newMenu = filterAsyncRouter(local);
@@ -68,6 +73,10 @@ export const useInfo = defineStore('test', {
         },
         loginOut(){
             this.$reset();
+            removeToken();
+            removeExpiresIn();
+            sessionStorage.clear();
+            router.push('/login')
         }
     },
 });

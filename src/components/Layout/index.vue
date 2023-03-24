@@ -20,6 +20,7 @@ let store = useInfo();
     .aside{
         transition: all .3s;
         border-right: solid 1px var(--el-menu-border-color);
+        overflow: hidden;
     }
     .header{
         display: flex;
