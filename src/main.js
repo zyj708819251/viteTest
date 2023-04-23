@@ -3,9 +3,9 @@ import App from '@/App.vue'
 
 
 const app = createApp(App);
-//全局变量定义
-app.config.globalProperties.abc=123
-console.log(app.config.globalProperties);
+//全局定义
+import common from '@utils/common.js'
+app.config.globalProperties=common;
 console.log(import.meta.env);
 
 //动态路由
@@ -31,9 +31,12 @@ app.use(router)
 // ElementPlus
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css'
-app.use(ElementPlus)
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 
 
+app.use(ElementPlus, {
+  locale: zhCn,
+})
 
 //引入pinia
 import { createPinia } from 'pinia' 
@@ -42,8 +45,8 @@ app.use(createPinia())
 
 
 //混入
-import {myMixin} from '@/mixins/index.js'
-app.mixin(myMixin)
+// import {myMixin} from '@/mixins/index.js'
+// app.mixin(myMixin)
 
 
 

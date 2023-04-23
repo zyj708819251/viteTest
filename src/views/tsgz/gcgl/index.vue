@@ -1,25 +1,29 @@
 <!--  -->
 <template>
-  <div>
-     <!-- ul>li{$}*1000 -->
-  </div>
+	<div>
+		<formCustomization
+			:formData="formData"
+		>
+		</formCustomization>
+	</div>
 </template>
 
-<script>
+<script setup>
+	import { ref, reactive, provide, getCurrentInstance } from 'vue';
+	import formCustomization from '@views/form/index.vue';
+	let abc = ref('');
 
-
-export default {
-   name:'tsgz',
-  components: {},
-  data () {
-    return {}
-  },
-  watch: {},
-  computed: {},
-  created () {},
-  mounted () {},
-  methods: {}
-}
+	let { proxy } = getCurrentInstance();
+	let formData = reactive({
+		formId: '100095'
+	});
+	// @resetSearchForm="resetSearchForm"
+	let resetSearchForm = function () {
+		formData.outParams.f_equi_ggxh = '';
+	};
+	let handleSelectionChange = function () {
+		alert(1);
+	};
+	// provide('resetSearchForm', resetSearchForm)
 </script>
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

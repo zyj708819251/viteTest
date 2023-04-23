@@ -13,9 +13,9 @@
     };
     import { getCurrentInstance } from 'vue';
 
-    const { proxy } = getCurrentInstance();
+    let { proxy } = getCurrentInstance();
     onMounted(() => {
-        console.log(proxy.getNowTime());
+        // console.log(proxy.getNowTime());
     });
 </script>
 <style lang="scss" scoped></style>

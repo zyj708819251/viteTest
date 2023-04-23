@@ -19,42 +19,42 @@
 import { ref, reactive, onMounted } from "vue";
 import { useRouter} from "vue-router";
 import { ElMessage } from "element-plus";
-import { login } from "@api/login";
+import { login } from "@api/login.js";
 import Cookies from "js-cookie";
 import { setToken, setExpiresIn } from "@utils/auth";
 
 import { encrypt, decrypt } from "@/utils/jsencrypt";
 
-const loginFormRef = ref();
+let loginFormRef = ref();
 
-const loginForm = reactive({
+let loginForm = reactive({
     username: "",
     password: ""
 });
-const rememberPass = ref(false);
+let rememberPass = ref(false);
 
-const rules = reactive({
+let rules = reactive({
     username: [{ required: true, message: "用户名不能为空！", trigger: "blur" }],
     password: [{ required: true, message: "密码不能为空！", trigger: "blur" }]
 });
 
-const router = useRouter();
+let router = useRouter();
 onMounted(() => {
     // 获取cookie
     getCookie();
 });
 
-const getCookie = () => {
-    const username = Cookies.get("username");
-    const password = Cookies.get("password");
-    const rememberMe = Cookies.get("rememberMe");
+let getCookie = () => {
+    let username = Cookies.get("username");
+    let password = Cookies.get("password");
+    let rememberMe = Cookies.get("rememberMe");
     loginForm.username = username === undefined ? loginForm.username : username;
     loginForm.password = password === undefined ? loginForm.password : decrypt(password);
     rememberPass.value = rememberMe === undefined ? false : Boolean(rememberMe);
 };
 
 // 登录
-const submitLoginForm = formEl => {
+let submitLoginForm = formEl => {
     if (!formEl) return;
     formEl.validate((valid, fields) => {
         if (valid) {
@@ -92,11 +92,11 @@ const submitLoginForm = formEl => {
         }
     });
 };
-const resetLoginForm = formEl => {
+let resetLoginForm = formEl => {
     if (!formEl) return;
     formEl.resetFields();
 };
-const goPage = () => {};
+let goPage = () => {};
 </script>
 
 <style lang="scss" scoped>

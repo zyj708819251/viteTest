@@ -13,6 +13,7 @@
     "axios": "^1.3.4",
     "element-plus": "^2.2.32",
     "form-customization": "^1.0.0",
+    "js-base64": "^3.7.5",
     "js-cookie": "^3.0.1",
     "jsencrypt": "^3.3.2",
     "nprogress": "^0.2.0",

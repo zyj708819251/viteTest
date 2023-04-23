@@ -8,9 +8,9 @@
 <script setup>
     import { ref, watch } from 'vue';
     import { useRoute } from 'vue-router';
-    const route = useRoute();
-    const breadcrumbList = ref([]);
-    const initBreadcrumbList = () => {
+    let route = useRoute();
+    let breadcrumbList = ref([]);
+    let initBreadcrumbList = () => {
         breadcrumbList.value = route.matched.slice(1);
     };
     watch(

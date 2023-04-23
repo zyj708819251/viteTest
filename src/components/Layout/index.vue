@@ -3,7 +3,7 @@
         <el-aside class="aside" :width="store.isCollapse?'200px':'63px'"><ZyjMenu></ZyjMenu></el-aside>
         <el-container>
             <el-header class="header"><ZyjHeader></ZyjHeader></el-header>
-            <el-main><router-view /></el-main>
+            <el-main><router-view class="h100"/></el-main>
         </el-container>
     </el-container>
 </template>
@@ -28,5 +28,8 @@ let store = useInfo();
         justify-content: space-between;
         border-bottom: solid 1px var(--el-menu-border-color);
     }
+	.mainWrap{
+		height: 100%;
+	}
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <el-menu class="menu" :collapse="!store.isCollapse" :default-active="$route.path" :router="true" :unique-opened="true">
+    <el-menu class="menu" :collapse="!store.isCollapse" :default-active="$route.path" :router="true" >
         <ChildrenMenu :list="store.leftMenu"></ChildrenMenu>
     </el-menu>
 </template>
@@ -9,11 +9,13 @@
     import { useRoute } from 'vue-router';
     let store = useInfo();
     let $route = useRoute();
+	console.log(store.leftMenu);
 </script>
 <style lang="scss" scoped>
     .menu {
         height: 100%;
         border-right: none;
+        overflow: auto;
     }
 
     .el-menu-vertical-demo:not(.el-menu--collapse) {

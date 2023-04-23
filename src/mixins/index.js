@@ -16,7 +16,8 @@ export const myMixin = {
 			date.getSeconds() < 10 ? second = '0' + date.getSeconds() : second = date.getSeconds();
 		
 			return [year, month, day].join('-') + ' ' + hour + ':' + min + ':' + second
-		}
+		},
+        
 		
 	}
 };
