@@ -14,8 +14,16 @@
 	let abc = ref('');
 
 	let { proxy } = getCurrentInstance();
+	let selectable=function (row,index) {
+		if(row.f_equi_sbmc=='22'){
+			return true
+		}else{
+			return false
+		}
+	}
 	let formData = reactive({
-		formId: '100095'
+		formId: '100095',
+		isSelectable:selectable
 	});
 	// @resetSearchForm="resetSearchForm"
 	let resetSearchForm = function () {
@@ -24,6 +32,7 @@
 	let handleSelectionChange = function () {
 		alert(1);
 	};
+	
 	// provide('resetSearchForm', resetSearchForm)
 </script>
 <style scoped lang="scss"></style>

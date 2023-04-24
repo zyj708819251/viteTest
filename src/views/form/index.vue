@@ -47,7 +47,15 @@
 			hideSearch: true, //隐藏搜索
 			hideControl: true, //隐藏控制按钮
 			hideInlineControl: true, //隐藏行内控制按钮
+			isSelectable:selectable//禁用条件
 		});
+		let selectable=function (row,index) {
+			if(row.f_equi_sbmc=='22'){
+				return true
+			}else{
+				return false
+			}
+		}
 	*/
 </script>
 
