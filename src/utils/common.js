@@ -5,8 +5,7 @@
 		// url配置
 		pageUrl: root,
 		baseUrl: window.location.hostname == 'localhost'?'http://43.143.246.52/prod-api':root + '/prod-api',
-		fileUrl: window.location.hostname == 'localhost' ? 'http://43.143.246.52' : window.location.protocol + "//" +
-			window.location.hostname,
+		fileUrl: window.location.hostname=='localhost'?'http://43.143.246.52':window.location.protocol + "//" + window.location.hostname,
 		// 控件大小
 		size: 'small',
 		// 权限

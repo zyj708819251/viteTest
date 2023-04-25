@@ -978,10 +978,18 @@
 								let rows = res.data.rows;
 								if (rows.length > 0) {
 									for (let i in rows) {
+										var downName=rows[i].fileName
 										fileList.push({
-											name: rows[i].fileName,
-											url: `${proxy.baseUrl}/file/downFile?url=${rows[i].objectName}`,
-											id: rows[i].id,
+											// name: rows[i].fileName,
+											// url: `${proxy.baseUrl}/file/downFile?url=${rows[i].objectName}`,
+											// id: rows[i].id,
+											
+											
+											name: rows[i].dataId+''+downName.substring(downName.lastIndexOf(".")),
+											downName:rows[i].fileName,
+											url: `${proxy.baseUrl}/file/minio/dowFiles?id=${rows[i].id}`,
+											id: rows[i].id
+											
 										});
 									}
 								}
@@ -1716,8 +1724,9 @@
 			const url = window.URL.createObjectURL(x.response);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = table.previewDown.name;
+			a.download = table.previewDown.downName;
 			a.click();
+			URL.revokeObjectURL(a.href)
 		};
 		x.send();
 	};
