@@ -1205,8 +1205,9 @@
 			}
 		}
 	};
-	//详情
+	//查看
 	let handleTableRowLook = function (row) {
+		var row=JSON.parse(JSON.stringify(row))
 		table.tableDialogTitle = '查看';
 		table.tableDialogField = [];
 		table.tableDialogForm = {};
@@ -1257,6 +1258,7 @@
 	};
 	//编辑
 	let handleTableRowEdit = function (row) {
+		var row=JSON.parse(JSON.stringify(row))
 		nextTick(() => {
 			tableDialogForm.value.clearValidate();
 		});
@@ -1707,12 +1709,19 @@
 	};
 	// 预览
 	let preview = function () {
-		var originUrl = table.previewDown.url;
-		var previewUrl = originUrl + '&fullfilename=' + table.previewDown.name;
-		var url = previewUrl.replace(/\#/g, '%23');
-		window.open(
-			proxy.fileUrl + ':8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url))
-		);
+		if(table.previewDown.url){
+			var originUrl = table.previewDown.url;
+			var previewUrl = originUrl + '&fullfilename=' + table.previewDown.name;
+			var url = previewUrl.replace(/\#/g, '%23');
+			window.open(
+				proxy.fileUrl + ':8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url))
+			);
+		}else{
+			ElMessage({
+				message: '暂未上传到服务器，不可进行预览操作',
+				type: 'warning',
+			});
+		}
 	};
 	// 下载
 	let down = function () {
@@ -1724,7 +1733,7 @@
 			const url = window.URL.createObjectURL(x.response);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = table.previewDown.downName;
+			a.download = table.previewDown.isBlob?table.previewDown.name:table.previewDown.downName;
 			a.click();
 			URL.revokeObjectURL(a.href)
 		};
