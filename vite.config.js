@@ -97,6 +97,13 @@ export default defineConfig({
                 rewrite: (path) => path.replace(/^\/prod-api/, '/prod-api'),
                 // rewrite: (path) => path.replace(`/^${process.env.VUE_APP_BASE_API}/`, process.env.VUE_APP_BASE_API),
             },
+			'/video': {
+			    target: 'https://example.com/',
+			    changeOrigin: true,
+			    rewrite: (path) => path.replace(/^\/video/, '/'),
+			    // rewrite: (path) => path.replace(`/^${process.env.VUE_APP_BASE_API}/`, process.env.VUE_APP_BASE_API),
+			},
+			
         },
     },
 });

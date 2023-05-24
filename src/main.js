@@ -47,9 +47,9 @@ app.use(createPinia())
 //混入
 // import {myMixin} from '@/mixins/index.js'
 // app.mixin(myMixin)
-
-
-
+// 签字
+import vueEsign from 'vue-esign'
+app.use(vueEsign)
 
 
 import '@assets/css/index.scss'
