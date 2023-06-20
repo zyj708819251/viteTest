@@ -15,6 +15,9 @@ export default defineConfig({
     plugins: [
         vue()
     ],
+	chainWebpack(config) {
+	        config.externals({ './cptable': 'var cptable' })
+	    },
     resolve: {
         alias: {
             // 配置目录别名

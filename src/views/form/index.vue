@@ -7,7 +7,7 @@
 			@selection-change="handleSelectionChange"
 		>
 			<!-- 搜索插槽 -->
-			<template v-slot:tableSearch>
+			<template #tableSearch>
 				<el-form-item label="部门">
 					<el-input
 						v-model="formData.outParams.f_equi_ggxh"
@@ -16,19 +16,19 @@
 				</el-form-item>
 			</template>
 			<!-- 顶部按钮插槽 -->
-			<template v-slot:tableControl>
+			<template #tableControl>
 				<el-button type="primary" :size="proxy.size">下载</el-button>
 			</template>
 			<!-- 行内按钮插槽 -->
-			<template v-slot:tableInlineControl="scope">
+			<template #tableInlineControl="scope">
 				<el-button text type="primary" :size="proxy.size">{{scope.row.id}}</el-button>
 			</template>
 			<!-- 展开行展示插槽 -->
-			<template v-slot:tableExpand="scope">
+			<template #tableExpand="scope">
 				<span>{{ scope.row }}</span>
 			</template>
 			<!-- 定制某个字段个性化 -->
-			<template v-slot:f_equi_sbmc="scope">
+			<template #f_equi_sbmc="scope">
 				<span style="color: red">{{ scope.row.f_equi_sbmc }}</span>
 			</template>
 		</formCustomization>
@@ -370,15 +370,15 @@
 						:label="column.columnComment"
 					>
 						<template #default="scope">
-							<span
-								v-text="showData(column.dictList, scope.row[column.columnName])"
-							></span>
+							<div :style="{ background: showStyle(scope.row, column) }">
+								{{ showData(column.dictList, scope.row[column.columnName]) }}
+							</div>
 						</template>
 					</el-table-column>
 					<el-table-column
 						:key="columnIndex + column.columnName"
 						sortable="custom"
-						v-else-if="column.htmlType == 'imageUpload'"
+						v-else-if="column.htmlType == 'imageUpload'||column.htmlType == 'fileUpload'"
 						:align="column.columnAlign ? column.columnAlign : 'center'"
 						:width="column.columnWidth ? column.columnWidth : 'auto'"
 						:prop="column.columnName"
@@ -389,60 +389,27 @@
 								<template #content>
 									<div
 										class="pointer"
-										v-for="(file, fileIndex) of scope.row[column.columnName + '-fileList']"
+										v-for="(file, fileIndex) of scope.row[column.columnName]"
 										:key="file.url"
 										@click="downLoadFile(file)"
 									>
-										{{ file.name }}
+										{{ file.downName }}
 									</div>
 								</template>
 								<div class="oneLine">
 									<span
 										class="pointer"
-										v-for="(file, fileIndex) of scope.row[column.columnName + '-fileList']"
+										v-for="(file, fileIndex) of scope.row[column.columnName]"
 										:key="file.url"
 										@click="downLoadFile(file)"
 									>
-										{{ file.name }};
+										{{ file.downName}};
 									</span>
 								</div>
 							</el-tooltip>
 						</template>
 					</el-table-column>
-					<el-table-column
-						:key="columnIndex + column.columnName"
-						sortable="custom"
-						v-else-if="column.htmlType == 'fileUpload'"
-						:align="column.columnAlign ? column.columnAlign : 'center'"
-						:width="column.columnWidth ? column.columnWidth : 'auto'"
-						:prop="column.columnName"
-						:label="column.columnComment"
-					>
-						<template #default="scope">
-							<el-tooltip class="item" effect="dark" placement="top">
-								<template #content>
-									<div
-										class="pointer"
-										v-for="(file, fileIndex) of scope.row[column.columnName + '-fileList']"
-										:key="fileIndex"
-										@click="downLoadFile(file)"
-									>
-										{{ file.name }}
-									</div>
-								</template>
-								<div class="oneLine">
-									<span
-										class="pointer"
-										v-for="(file, fileIndex) of scope.row[column.columnName + '-fileList']"
-										:key="fileIndex"
-										@click="downLoadFile(file)"
-									>
-										{{ file.name }};
-									</span>
-								</div>
-							</el-tooltip>
-						</template>
-					</el-table-column>
+
 					<el-table-column
 						:key="columnIndex + column.columnName"
 						sortable="custom"
@@ -455,7 +422,7 @@
 					>
 						<template #default="scope">
 							<slot :name="column.columnName" :row="scope.row" :column="column">
-								<div :style="{ color: showStyle(scope.row, column) }">
+								<div :style="{ background: showStyle(scope.row, column) }">
 									{{ scope.row[column.columnName] }}
 								</div>
 							</slot>
@@ -522,13 +489,14 @@
 	</div>
 	<ZyjDialog
 		v-model="table.tableDialogVisible"
-		:dialogTitle="table.tableDialogTitle"
-		:dialogCenter="true"
-		:dialogAlignCenter="true"
-		:dialogFullscreenBtn="true"
-		dialogWidth="40%"
+		:title="table.tableDialogTitle"
+		width="40%"
+		:before-close="beforeClose"
 	>
-		<template v-slot:body>
+		<!-- :dialogCenter="true"
+		:dialogAlignCenter="true"
+		:dialogFullscreenBtn="true" -->
+		<template #body>
 			<el-form
 				:model="table.tableDialogForm"
 				ref="tableDialogForm"
@@ -672,23 +640,19 @@
 			            "
 						:on-change="
 			                (file, fileList) => {
-			                    handleChange(file, fileList, item,itemIndex);
+			                    handleChange(file, fileList, item,table.tableDialogForm[item.columnName]);
 			                }
 			            "
 						:on-remove="
 			                (file, fileList) => {
-			                    handleRemove(file, fileList, item,itemIndex);
+			                    handleRemove(file, fileList, item,table.tableDialogForm[item.columnName]);
 			                }
 			            "
 						:on-preview="handllePreview"
-						:file-list="item.options.fileList"
+						:before-remove="beforeRemove"
+						:file-list="table.tableDialogForm[item.columnName]"
 						:auto-upload="false"
 					>
-						<!-- :before-remove="
-					    (file, fileList) => {
-					        handleBeforeRemove(file, fileList, item);
-					    }
-					" -->
 						<template v-if="table.tableDialogType!='Look'">
 							<el-button
 								v-if="item.htmlType == 'fileUpload'"
@@ -700,18 +664,21 @@
 							<el-icon v-else><Plus /></el-icon>
 						</template>
 						<template slot="tip" v-else>
-							<span class="tip" v-if="item.options.fileList.length==0">
+							<span
+								class="tip"
+								v-if="table.tableDialogForm[item.columnName].length==0"
+							>
 								暂未上传文件
 							</span>
 							<span class="tip" v-else>
-								总共上传{{item.options.fileList.length}}个文件
+								总共上传{{table.tableDialogForm[item.columnName].length}}个文件
 							</span>
 						</template>
 					</el-upload>
 				</el-form-item>
 			</el-form>
 		</template>
-		<template v-slot:footer v-if="!table.tableDialogFormDisabled">
+		<template #footer v-if="!table.tableDialogFormDisabled">
 			<el-button type="primary" :size="proxy.size" @click="resetDialogForm(tableDialogForm)">
 				重 置
 			</el-button>
@@ -721,26 +688,14 @@
 		</template>
 	</ZyjDialog>
 
-	<ZyjDialog
-		dialogTitle="预览或下载"
-		v-model="table.isPreviewOrDown"
-		:dialogCenter="true"
-		:dialogAlignCenter="true"
-		dialogWidth="20%"
-	>
-		<template v-slot:body>
+	<ZyjDialog v-model="table.isPreviewOrDown" title="预览或下载" width="20%">
+		<template #body>
 			<el-button type="primary" :size="proxy.size" @click="preview()">预览</el-button>
 			<el-button type="primary" :size="proxy.size" @click="down()">下载</el-button>
 		</template>
 	</ZyjDialog>
-	<ZyjDialog
-		dialogTitle="导入"
-		v-model="table.dialogExport"
-		:dialogCenter="true"
-		:dialogAlignCenter="true"
-		dialogWidth="20%"
-	>
-		<template v-slot:body>
+	<ZyjDialog v-model="table.dialogExport" title="导入" width="20%" :draggable="true">
+		<template #body>
 			<el-upload
 				ref="excelUpload"
 				class="uploadImport"
@@ -758,7 +713,7 @@
 				<el-button slot="trigger" :size="size" type="primary">选取文件</el-button>
 			</el-upload>
 		</template>
-		<template v-slot:footer>
+		<template #footer>
 			<el-button type="primary" :size="proxy.size" @click="table.dialogExport = false">
 				取消
 			</el-button>
@@ -766,14 +721,8 @@
 		</template>
 	</ZyjDialog>
 
-	<ZyjDialog
-		dialogTitle="错误详情"
-		v-model="table.tableErrorDetailVisible"
-		:dialogCenter="true"
-		:dialogAlignCenter="true"
-		dialogWidth="50%"
-	>
-		<template v-slot:body>
+	<ZyjDialog v-model="table.tableErrorDetailVisible" title="错误详情" width="50%">
+		<template #body>
 			<el-table
 				border
 				stripe
@@ -877,7 +826,9 @@
 		// 单选的数据
 		tableRadioSelection: null,
 		// 排序格式
-		orderJson: {},
+		orderJson: {
+			id: 'desc',
+		},
 		// 选中的id集合
 		tableChekIds: [],
 		// 进度数
@@ -886,8 +837,7 @@
 		isPreviewOrDown: false,
 		// 预览文件
 		previewDown: {},
-		// 存储临时值
-		tableTempData: [],
+
 		//导入
 		exportFiles: [],
 		dialogExport: false,
@@ -978,29 +928,21 @@
 								let rows = res.data.rows;
 								if (rows.length > 0) {
 									for (let i in rows) {
-										var downName=rows[i].fileName
+										var downName = rows[i].fileName;
 										fileList.push({
-											// name: rows[i].fileName,
-											// url: `${proxy.baseUrl}/file/downFile?url=${rows[i].objectName}`,
-											// id: rows[i].id,
-											
-											
-											name: rows[i].dataId+''+downName.substring(downName.lastIndexOf(".")),
-											downName:rows[i].fileName,
+											dataId: rows[i].dataId,
+											downName:
+												rows[i].dataId +
+												'' +
+												downName.substring(downName.lastIndexOf('.')),
+											name: rows[i].fileName,
 											url: `${proxy.baseUrl}/file/minio/dowFiles?id=${rows[i].id}`,
-											id: rows[i].id
-											
+											id: rows[i].id,
 										});
 									}
 								}
 							}
-							tableData[i][table.tableColumnsInit[j].columnName + '-fileList'] =
-								fileList;
-							table.tableColumnsInit[j].options = {
-								fileList: fileList,
-								files: [],
-								dataId: tableData[i][table.tableColumnsInit[j].columnName],
-							};
+							tableData[i][table.tableColumnsInit[j].columnName] = fileList;
 						}
 					}
 				}
@@ -1014,6 +956,10 @@
 				});
 			}
 		});
+	};
+	// 显示文件名
+	let renderFileText = function (file) {
+		return `${file.downName},`;
 	};
 	//排序自定义
 	let handleSortChange = function ({ column, prop, order }) {
@@ -1207,7 +1153,10 @@
 	};
 	//查看
 	let handleTableRowLook = function (row) {
-		var row=JSON.parse(JSON.stringify(row))
+		nextTick(() => {
+			tableDialogForm.value.clearValidate();
+		});
+		var row = JSON.parse(JSON.stringify(row));
 		table.tableDialogTitle = '查看';
 		table.tableDialogField = [];
 		table.tableDialogForm = {};
@@ -1218,12 +1167,6 @@
 					table.tableDialogForm[v.columnName] = row[v.columnName]
 						? row[v.columnName].split(',')
 						: [];
-				} else if (v.htmlType == 'imageUpload' || v.htmlType == 'fileUpload') {
-					v.options = {
-						fileList: row[v.columnName + '-fileList'],
-						files: [],
-						dataId: '',
-					};
 				} else {
 					table.tableDialogForm[v.columnName] = row[v.columnName];
 				}
@@ -1239,33 +1182,32 @@
 		table.tableDialogTitle = '添加';
 		table.tableDialogField = [];
 		table.tableDialogForm = {};
-		table.tableTempData = [];
 		let data = JSON.parse(JSON.stringify(table.tableColumnsInit));
 		data.forEach((v, i) => {
 			if (v.isInsert == '1') {
-				if (v.htmlType == 'imageUpload' || v.htmlType == 'fileUpload') {
-					v.options = {
-						fileList: [],
-						files: [],
-						dataId: '',
-					};
+				if (
+					v.htmlType == 'imageUpload' ||
+					v.htmlType == 'fileUpload' ||
+					v.htmlType == 'multipleSelect'
+				) {
+					table.tableDialogForm[v.columnName] = [];
+				} else {
+					table.tableDialogForm[v.columnName] = '';
 				}
-				table.tableDialogForm[v.columnName] = '';
 				table.tableDialogField.push(v);
 			}
 		});
-		table.tableTempData = JSON.parse(JSON.stringify(table.tableDialogField));
+		console.log(table.tableDialogForm);
 	};
 	//编辑
 	let handleTableRowEdit = function (row) {
-		var row=JSON.parse(JSON.stringify(row))
+		var row = JSON.parse(JSON.stringify(row));
 		nextTick(() => {
 			tableDialogForm.value.clearValidate();
 		});
 		table.tableDialogTitle = '编辑';
 		table.tableDialogField = [];
 		table.tableDialogForm = {};
-		table.tableTempData = [];
 		let data = JSON.parse(JSON.stringify(table.tableColumnsInit));
 		data.forEach((v, i) => {
 			if (v.isEdit == '1') {
@@ -1273,21 +1215,12 @@
 					table.tableDialogForm[v.columnName] = row[v.columnName]
 						? row[v.columnName].split(',')
 						: [];
-				} else if (v.htmlType == 'imageUpload' || v.htmlType == 'fileUpload') {
-					v.options = {
-						fileList: row[v.columnName + '-fileList'],
-						files: [],
-						dataId: '',
-					};
-					table.tableDialogForm[v.columnName] = row[v.columnName];
 				} else {
 					table.tableDialogForm[v.columnName] = row[v.columnName];
 				}
 				table.tableDialogField.push(v);
 			}
 		});
-
-		table.tableTempData = JSON.parse(JSON.stringify(table.tableDialogField));
 
 		table.tableDialogForm.id = row.id;
 	};
@@ -1371,36 +1304,46 @@
 			spinner: 'el-icon-loading',
 			background: 'rgba(0, 0, 0, 0.7)',
 		});
-		var params = JSON.parse(JSON.stringify(table.tableDialogForm));
+		var params = Object.assign({}, table.tableDialogForm);
 		for (let i in table.tableDialogField) {
 			if (
 				table.tableDialogField[i].htmlType == 'imageUpload' ||
 				table.tableDialogField[i].htmlType == 'fileUpload'
 			) {
-				let files = table.tableDialogField[i].options.files;
+				let files = params[table.tableDialogField[i].columnName];
 				if (files.length) {
 					let form = new FormData();
-					table.tableDialogField[i].options.files.forEach((file) => {
-						form.append('files', file);
+					var fileRawArr = [];
+					files.forEach((file) => {
+						if (file.raw) {
+							form.append('files', file.raw);
+							fileRawArr.push(file.raw);
+						}
 					});
-					form.append('bucketName', props.formData.formId);
-					form.append('dataId', params[table.tableDialogField[i].columnName] || '');
-					let res = await uploadFile(form, (progressEvent) => {
-						table.progressText =
-							((progressEvent.loaded / progressEvent.total) * 100) | 0;
-						loading.setText(`数据提交中，进度${table.progressText}%,请稍后~`);
-					});
-					if (res.code == 200) {
-						// if (this.tableDialogType == "Add") {
-						params[table.tableDialogField[i].columnName] = res.msg;
-						// }
-						console.log('照片已上传');
-					} else {
-						ElMessage({
-							type: 'error',
-							message: res.msg,
+					if (fileRawArr.length != 0) {
+						form.append('bucketName', props.formData.formId);
+						form.append('dataId', files[0].dataId || '');
+						let res = await uploadFile(form, (progressEvent) => {
+							table.progressText =
+								((progressEvent.loaded / progressEvent.total) * 100) | 0;
+							loading.setText(`数据提交中，进度${table.progressText}%,请稍后~`);
 						});
+						if (res.code == 200) {
+							// if (this.tableDialogType == "Add") {
+							params[table.tableDialogField[i].columnName] = res.msg;
+							// }
+							console.log('照片已上传');
+						} else {
+							ElMessage({
+								type: 'error',
+								message: res.msg,
+							});
+						}
+					} else {
+						params[table.tableDialogField[i].columnName] = files[0].dataId;
 					}
+				} else {
+					params[table.tableDialogField[i].columnName] = '';
 				}
 			} else if (table.tableDialogField[i].htmlType == 'multipleSelect') {
 				params[table.tableDialogField[i].columnName] =
@@ -1427,8 +1370,8 @@
 					getData();
 				} else {
 					ElMessage({
-						type: 'error',
 						message: res.msg,
+						type: 'error',
 					});
 				}
 				loading.close();
@@ -1482,39 +1425,33 @@
 		ElMessage.warning(`限制选择 ${item.limit} 个文件!`);
 	};
 	// 移除文件
-	let handleRemove = async function (file, fileList, item, itemIndex) {
+	let handleRemove = async function (file, fileList, item, myFileList) {
 		let res = await delFile(file.id);
 		if (res.code == 200) {
-			if (table.tableTempData[itemIndex].isRequired == '1') {
-				if (item.options.fileList.length == 0) {
-					table.tableDialogForm[item.columnName] = '';
-					item.isRequired = '1';
-				} else {
-					item.isRequired = '0';
+			table.tableDialogForm[item.columnName] = fileList;
+			tableDialogForm.value.validate((valid) => {
+				if (!valid) {
+					ElMessage.warning(`请完善必填项，然后进行提交！`);
 				}
-			} else {
-				if (item.options.fileList.length == 0) {
-					table.tableDialogForm[item.columnName] = '';
-				}
-			}
+			});
 		}
 	};
-	// let handleBeforeRemove = function (file, fileList, item,itemIndex) {
-	// 	if (fileList.length != 0) {
-	// 		item.isRequired = '1';
-	// 	}
-	// };
+	let beforeRemove = function (done) {
+		return ElMessageBox.confirm('确认要删除吗?', '提示', {
+			type: 'warning',
+		});
+	};
 	// 选择文件
-	let handleChange = function (file, fileList, item, itemIndex) {
+	let handleChange = function (file, fileList, item, myFileList) {
 		const isLt2M = file.raw.size / 1024 / 1024 < 100;
 		if (item.htmlType == 'imageUpload') {
 			const isPicture = ['image/jpeg', 'image/png', 'image/gif'].includes(file.raw.type);
 			if (!isPicture) {
-				delFile();
+				fileList.pop();
 				ElMessage.error('只能上传图片!');
 			}
 			if (!isLt2M) {
-				delFile();
+				fileList.pop();
 				ElMessage.error('文件大小不能超过 100MB!');
 			}
 			if (isPicture && isLt2M) {
@@ -1522,7 +1459,7 @@
 			}
 		} else {
 			if (!isLt2M) {
-				delFile();
+				fileList.pop();
 				ElMessage.error('文件大小不能超过 100MB!');
 			}
 			if (isLt2M) {
@@ -1530,30 +1467,43 @@
 			}
 		}
 		function addFile() {
-			item.options.fileList.push({ name: file.name, url: file.url });
-			item.options.files.push(file.raw);
+			myFileList.push(file);
 		}
-		function delFile() {
-			fileList.splice(
-				fileList.findIndex((item) => item.url === file.url),
-				1
-			);
-		}
-		if (table.tableTempData[itemIndex].isRequired == '1') {
-			if (item.options.fileList.length > 0) {
-				tableDialogForm.value.clearValidate(item.columnName);
-				item.isRequired = '0';
-			} else {
-				item.isRequired = '1';
-			}
-		} else {
-			if (item.options.fileList.length > 0) {
-				tableDialogForm.value.clearValidate(item.columnName);
-			} else {
-			}
+
+		if (fileList.length > 0) {
+			tableDialogForm.value.clearValidate(item.columnName);
 		}
 	};
-
+	// 关闭弹窗前
+	let beforeClose = function (done) {
+		if (table.tableDialogType == 'Edit' || table.tableDialogType == 'Add') {
+			tableDialogForm.value.validate((valid) => {
+				if (!valid) {
+					ElMessageBox.confirm('必填项未添加，确认关闭吗？', '提示', {
+						type: 'warning',
+					})
+						.then(() => {
+							done();
+						})
+						.catch(() => {
+							done(true);
+						});
+				} else {
+					ElMessageBox.confirm('请确认数据是否已经提交?', '提示', {
+						type: 'warning',
+					})
+						.then(() => {
+							done();
+						})
+						.catch(() => {
+							done(true);
+						});
+				}
+			});
+		} else {
+			done();
+		}
+	};
 	// 格式化搜索数据格式
 	let searchFieldFormateFun = function (data) {
 		data.forEach((v, i) => {
@@ -1703,20 +1653,27 @@
 		table.isPreviewOrDown = true;
 	};
 
-	let handllePreview = function (item) {
-		table.previewDown = item;
-		table.isPreviewOrDown = true;
+	let handllePreview = function (file) {
+		if (file.raw) {
+			ElMessage({
+				message: '文件暂未上传到服务器，不提供预览！',
+				type: 'warning',
+			});
+		} else {
+			table.previewDown = file;
+			table.isPreviewOrDown = true;
+		}
 	};
 	// 预览
 	let preview = function () {
-		if(table.previewDown.url){
+		if (table.previewDown.url) {
 			var originUrl = table.previewDown.url;
-			var previewUrl = originUrl + '&fullfilename=' + table.previewDown.name;
+			var previewUrl = originUrl + '&fullfilename=' + table.previewDown.downName;
 			var url = previewUrl.replace(/\#/g, '%23');
 			window.open(
 				proxy.fileUrl + ':8012/onlinePreview?url=' + encodeURIComponent(Base64.encode(url))
 			);
-		}else{
+		} else {
 			ElMessage({
 				message: '暂未上传到服务器，不可进行预览操作',
 				type: 'warning',
@@ -1733,9 +1690,9 @@
 			const url = window.URL.createObjectURL(x.response);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = table.previewDown.isBlob?table.previewDown.name:table.previewDown.downName;
+			a.download = table.previewDown.name;
 			a.click();
-			URL.revokeObjectURL(a.href)
+			URL.revokeObjectURL(a.href);
 		};
 		x.send();
 	};

@@ -202,3 +202,11 @@
 		height: 80px !important;
 	}
 }
+
+// 去掉提示‘按delete键可删除’
+.el-upload-list__item.is-success.focusing .el-icon-close-tip {
+  display: none !important;
+}
+.el-form-item__content{
+	display: block;
+}

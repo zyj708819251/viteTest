@@ -2,7 +2,7 @@
 <template>
 	<div class="box">
 		<div v-for="(item, index) in videoList" :key="index">
-		  <video width="400" height="300" :id="'video'+index" :src="item.src" :poster="item.poster" controls autoplay muted></video>
+		  <!-- <video width="400" height="300" :id="'video'+index" :src="item.src" :poster="item.poster" controls autoplay muted></video> -->
 		</div>
 	</div>
    
@@ -30,18 +30,18 @@ export default {
     }
   },
   mounted() {
-    this.videoList.forEach((item, index) => {
-      const video = document.getElementById('video' + index)
-      if (flvjs.isSupported()) {
-        const flvPlayer = flvjs.createPlayer({
-          type: 'flv',
-          url: item.src
-        })
-        flvPlayer.attachMediaElement(video)
-        flvPlayer.load()
-        flvPlayer.play()
-      }
-    })
+    // this.videoList.forEach((item, index) => {
+    //   const video = document.getElementById('video' + index)
+    //   if (flvjs.isSupported()) {
+    //     const flvPlayer = flvjs.createPlayer({
+    //       type: 'flv',
+    //       url: item.src
+    //     })
+    //     flvPlayer.attachMediaElement(video)
+    //     flvPlayer.load()
+    //     flvPlayer.play()
+    //   }
+    // })
   }
 }
 </script>

@@ -26,18 +26,15 @@
 <template>
 	<el-dialog
 		v-bind="$attrs"
+		v-on="$listeners"
 		:modelValue="dialogVisible"
-		:title="dialogTitle"
 		:close-on-click-modal="false"
 		:close-on-press-escape="false"
 		:append-to-body="false"
-		:fullscreen="dialogFullscreen"
-		:draggable="dialogDraggable"
-		:align-center="dialogAlignCenter"
-		:width="dialogWidth"
+		:align-center="true"
 		@close="dialogClose"
 	>
-		<template #header>
+		<!-- <template #header>
 			<div class="dialogHeader" @dblclick="dialogFullscreen=!dialogFullscreen">
 				<p class="el-dialog__title">{{dialogTitle}}</p>
 				<el-icon
@@ -49,7 +46,7 @@
 					<FullScreen v-else />
 				</el-icon>
 			</div>
-		</template>
+		</template> -->
 		<slot name="body"></slot>
 		<template #footer v-if="proxy.$slots.footer">
 			<slot name="footer"></slot>
@@ -63,10 +60,6 @@
 		dialogVisible: {
 			type: Boolean,
 			default: false,
-		},
-		dialogTitle: {
-			type: String,
-			default: '弹窗标题',
 		},
 		dialogCenter: {
 			type: Boolean,
@@ -104,6 +97,9 @@
 		emit('dialogClose');
 		dialogFullscreen.value = props.dialogDeafultFullscreen;
 	};
+	// let dialogBeforeClose=(done)=>{
+	// 	emit('dialogBeforeClose',done);
+	// }
 
 	onMounted(() => {
 		dialogFullscreen.value = props.dialogDeafultFullscreen;
